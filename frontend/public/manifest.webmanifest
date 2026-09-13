@@ -1,0 +1,12 @@
+{
+  "name": "이은재 숙제 게시판",
+  "short_name": "이은재 숙제",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fb",
+  "theme_color": "#2956d7",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
+

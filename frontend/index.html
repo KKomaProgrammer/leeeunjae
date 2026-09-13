@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f8fb" />
+    <meta name="application-name" content="이은재 숙제 게시판" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="이은재 숙제" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon.svg" />
+    <title>이은재 숙제 게시판</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">EUNJAE CLASS BOARD</p>
+          <h1>이은재 숙제 게시판</h1>
+        </div>
+        <button id="logoutButton" class="text-button" type="button" hidden>로그아웃</button>
+      </header>
+
+      <section id="loginView" class="login-layout">
+        <form id="loginForm" class="panel login-panel">
+          <div class="field">
+            <label for="studentId">ID</label>
+            <input id="studentId" name="studentId" autocomplete="username" maxlength="100" required />
+          </div>
+          <div class="field">
+            <label for="password">비밀번호</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required />
+          </div>
+          <button id="loginButton" class="primary-button" type="submit">게시판 불러오기</button>
+          <p id="loginStatus" class="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="boardView" class="board-layout" hidden>
+        <div class="mode-tabs" role="tablist" aria-label="조회 종류">
+          <button id="boardModeButton" class="mode-tab active" type="button" role="tab" aria-selected="true">반별게시판</button>
+          <button id="readingModeButton" class="mode-tab" type="button" role="tab" aria-selected="false">낭독</button>
+          <button id="writingModeButton" class="mode-tab" type="button" role="tab" aria-selected="false">작문</button>
+        </div>
+
+        <form id="searchForm" class="panel search-panel">
+          <div class="field teacher-field">
+            <label for="teacherSelect">선생님 게시판</label>
+            <select id="teacherSelect" required></select>
+          </div>
+          <div class="field keyword-field">
+            <label id="keywordLabel" for="keywordInput">반 이름</label>
+            <input id="keywordInput" maxlength="80" placeholder="비우면 전체 게시물" />
+          </div>
+          <div class="field nth-field">
+            <label for="nthInput">위에서</label>
+            <div class="number-wrap">
+              <input id="nthInput" type="number" inputmode="numeric" min="1" max="500" value="1" required />
+              <span>번째</span>
+            </div>
+          </div>
+          <div class="search-actions">
+            <button id="searchButton" class="primary-button search-button" type="submit">가져오기</button>
+            <button id="notifyButton" class="secondary-button notify-button" type="button">새 글 알림</button>
+          </div>
+          <p id="searchStatus" class="status full-row" aria-live="polite"></p>
+          <p id="notifyStatus" class="status full-row notify-status" aria-live="polite"></p>
+        </form>
+
+        <form id="readingForm" class="panel reading-panel" hidden>
+          <div class="field reading-round-field">
+            <label for="readingRoundInput">회차</label>
+            <div class="number-wrap">
+              <input id="readingRoundInput" type="number" inputmode="numeric" min="1" max="500" value="1" required />
+              <span>회</span>
+            </div>
+          </div>
+          <div class="field reading-attempt-field">
+            <label for="readingAttemptSelect">구분</label>
+            <select id="readingAttemptSelect" required>
+              <option value="선행">선행</option>
+              <option value="재시">재시</option>
+            </select>
+          </div>
+          <div class="evaluation-actions">
+            <button id="readingSearchButton" class="primary-button search-button" type="submit">결과 가져오기</button>
+            <button id="readingNotifyButton" class="secondary-button notify-button" type="button">모든 평가 알림</button>
+          </div>
+          <p id="readingStatus" class="status full-row" aria-live="polite"></p>
+        </form>
+
+        <section id="writingPanel" class="panel evaluation-panel" hidden>
+          <div>
+            <p class="eyebrow">WRITING</p>
+            <h2>작문 평가 완료 알림</h2>
+          </div>
+          <button id="writingNotifyButton" class="secondary-button notify-button" type="button">모든 평가 알림</button>
+          <p id="writingStatus" class="status full-row" aria-live="polite"></p>
+        </section>
+
+        <section id="watchSection" class="panel watches-panel" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ALERTS</p>
+              <h2>등록한 알림</h2>
+            </div>
+            <span id="watchCount" class="count-badge">0</span>
+          </div>
+          <div id="watchList" class="watch-list"></div>
+          <p id="watchEmpty" class="empty-copy">등록한 알림이 없습니다.</p>
+          <p id="watchStatus" class="status" aria-live="polite"></p>
+        </section>
+
+        <section id="noticeSection" class="panel notices-panel" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">NOTICE</p>
+              <h2>공지</h2>
+            </div>
+            <span id="noticeCount" class="count-badge"></span>
+          </div>
+          <div id="noticeList" class="notice-list"></div>
+        </section>
+
+        <section id="allPostsSection" class="panel notices-panel" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">BOARD</p>
+              <h2>게시물</h2>
+            </div>
+            <span id="allPostCount" class="count-badge"></span>
+          </div>
+          <div id="allPostList" class="notice-list"></div>
+        </section>
+
+        <section id="resultSection" class="result-stack" hidden>
+          <article class="panel result-panel">
+            <div class="result-heading">
+              <div>
+                <p id="resultTeacher" class="eyebrow"></p>
+                <h2 id="resultTitle"></h2>
+                <p id="resultMeta" class="result-meta"></p>
+              </div>
+              <div class="result-actions">
+                <button id="downloadImageButton" class="secondary-button" type="button" disabled>이미지 저장</button>
+                <button id="shareImageButton" class="primary-button compact" type="button" disabled>공유</button>
+              </div>
+            </div>
+
+            <div id="imageLoading" class="image-loading" hidden>
+              <span class="spinner" aria-hidden="true"></span>
+              <span>이미지 만드는 중</span>
+            </div>
+            <div id="imageFrame" class="image-frame" hidden>
+              <img id="resultImage" alt="조회 결과 이미지" />
+            </div>
+            <p id="imageStatus" class="status" aria-live="polite"></p>
+            <div id="otherMatches" class="other-matches" hidden></div>
+          </article>
+
+          <article id="attachmentSection" class="panel attachments-panel" hidden>
+            <div class="section-heading attachments-heading">
+              <div>
+                <p class="eyebrow">FILES</p>
+                <h2>첨부파일</h2>
+              </div>
+              <label class="select-all"><input id="selectAllAttachments" type="checkbox" /> 전체 선택</label>
+            </div>
+            <div id="attachmentList" class="attachment-list"></div>
+            <button id="downloadAttachmentsButton" class="primary-button" type="button">선택 파일 다운로드</button>
+            <p id="attachmentStatus" class="status" aria-live="polite"></p>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <div id="consentModal" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="consentTitle" hidden>
+      <div class="modal-backdrop" data-close-consent></div>
+      <section class="consent-card panel">
+        <button id="consentCloseButton" class="modal-close" type="button" aria-label="닫기">×</button>
+        <p class="eyebrow">NEW POST ALERT</p>
+        <h2 id="consentTitle">새 게시물 알림</h2>
+        <p id="consentSummary" class="consent-summary"></p>
+        <fieldset class="delivery-options">
+          <legend>알림 받는 방법</legend>
+          <label class="delivery-option">
+            <input id="pushDelivery" type="radio" name="deliveryChannel" value="push" checked />
+            <span><strong>브라우저 알림</strong><small>현재 기기에 알림 표시</small></span>
+          </label>
+          <label class="delivery-option">
+            <input id="mmsDelivery" type="radio" name="deliveryChannel" value="mms" />
+            <span><strong>문자(MMS)</strong><small>인증한 번호로 결과 전송</small></span>
+          </label>
+        </fieldset>
+        <div id="mmsFields" class="mms-fields" hidden>
+          <p class="field-help">개인정보에 동의하고 문자 수신 번호를 인증해 주세요.</p>
+          <div class="verification-row">
+            <label class="phone-field">
+              <span>문자 수신 번호</span>
+              <input id="mmsPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-1234-5678" />
+            </label>
+            <button id="mmsCodeRequestButton" class="secondary-button" type="button">인증번호 받기</button>
+          </div>
+          <div id="mmsCodeRow" class="verification-row" hidden>
+            <label class="phone-field">
+              <span>인증번호 4자리</span>
+              <input id="mmsCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="0000" />
+            </label>
+            <button id="mmsCodeConfirmButton" class="secondary-button" type="button">인증 확인</button>
+          </div>
+          <p id="mmsVerificationStatus" class="status" aria-live="polite"></p>
+        </div>
+        <div class="privacy-note">
+          <strong>알림용 개인정보 저장 및 이용</strong>
+          <p>ID·비밀번호는 새 결과 확인에, 휴대폰 번호는 인증과 정보성 문자 발송에만 사용합니다. 정보는 암호화해 알림 해제 시까지 보관하며, 문자 발송 시 번호와 내용이 Infobip에 전달되며, 대체 발송을 설정한 경우 해당 발송사(SOLAPI·Twilio·코드문자)에 전달될 수 있습니다.</p>
+        </div>
+        <label class="consent-check">
+          <input id="privacyConsent" type="checkbox" />
+          <span class="checkmark" aria-hidden="true"></span>
+          <span>위 개인정보 저장 및 이용에 동의합니다.</span>
+        </label>
+        <p id="iosNote" class="ios-note">iPhone은 이 사이트를 홈 화면에 추가한 뒤 알림을 허용해 주세요.</p>
+        <p id="consentStatus" class="status" aria-live="polite"></p>
+        <div class="modal-actions">
+          <button id="consentCancelButton" class="text-button" type="button">취소</button>
+          <button id="consentConfirmButton" class="primary-button" type="button">동의하고 등록</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="captureHost" class="capture-host" aria-hidden="true"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+

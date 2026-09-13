@@ -1,0 +1,16 @@
+{
+  "name": "leeeunjae-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite frontend --host 0.0.0.0",
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}
