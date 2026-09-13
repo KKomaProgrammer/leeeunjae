@@ -2,6 +2,7 @@ import html2canvas from 'html2canvas';
 import { applicationServerKey, sameApplicationServerKey } from './push.js';
 import './styles.css';
 import { apiUrl } from './api.js';
+import { createClientToken } from './client-token.js';
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -172,7 +173,7 @@ async function notifyRequest(body = null) {
 function mmsClientToken() {
   let token = localStorage.getItem(MMS_CLIENT_STORAGE_KEY) || '';
   if (!/^[A-Za-z0-9_-]{20,180}$/.test(token)) {
-    token = `${crypto.randomUUID().replace(/-/g, '')}${crypto.randomUUID().replace(/-/g, '')}`;
+    token = createClientToken();
     localStorage.setItem(MMS_CLIENT_STORAGE_KEY, token);
   }
   return token;
@@ -1081,4 +1082,3 @@ if ('serviceWorker' in navigator) {
     .catch(() => {});
 }
 openNotificationResult();
-
